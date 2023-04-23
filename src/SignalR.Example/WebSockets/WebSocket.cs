@@ -8,27 +8,22 @@ namespace SignalR.Example.WebSockets
 {
     public class WebSocket : Hub
     {
-        private static ConnectionMultiplexer _redisConnection;
-        private static ISubscriber _redisSubscriber;
-        private static string _redisChannelName = "channel";
+        private readonly ConnectionMultiplexer _redisConnection;
+        private readonly ISubscriber _redisSubscriber;
         private readonly IServiceProvider _serviceProvider;
-        private ILogger _logger;
+        private readonly  string _redisChannelName = "channel";
+        private ILogger? _logger;
 
-
-        public WebSocket(IServiceProvider serviceProvider)
+        public WebSocket(IServiceProvider serviceProvider, ConnectionMultiplexer redisConnection)
         {
             _serviceProvider = serviceProvider;
+            _redisConnection = redisConnection;
+            _redisSubscriber = _redisConnection.GetSubscriber();
 
-            if (_redisConnection == null)
+            _redisSubscriber.Subscribe(_redisChannelName, async (channel, message) =>
             {
-                string redisConnectionString = "localhost";
-                _redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
-                _redisSubscriber = _redisConnection.GetSubscriber();
-                _redisSubscriber.Subscribe(_redisChannelName, async (channel, message) =>
-                {
-                    await RedisReceivedMessage(message);
-                });
-            }
+                await RedisReceivedMessage(message);
+            });
         }
 
         public override async Task OnConnectedAsync()

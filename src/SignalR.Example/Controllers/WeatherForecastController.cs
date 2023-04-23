@@ -36,7 +36,7 @@ namespace SignalR.Example.Controllers
                 PropertyNameCaseInsensitive = true
             };
 
-            var value = await _cache.SetMembersAsync(key);
+            var value = await _cache.SetMembersAsync(key).ConfigureAwait(false);
 
             var content = value.FirstOrDefault();
 
@@ -54,7 +54,7 @@ namespace SignalR.Example.Controllers
                 WriteIndented = true,
             };
 
-            var value = await _cache.SetAddAsync(person.Name, JsonSerializer.Serialize(person, options));
+            var value = await _cache.SetAddAsync(person.Name, JsonSerializer.Serialize(person, options)).ConfigureAwait(false);
             _cache.KeyExpire(person.Name, TimeSpan.FromSeconds(40));
 
 

@@ -12,8 +12,12 @@ namespace SignalR.Example
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var redis = ConnectionMultiplexer.Connect("localhost");
+            var redis = ConnectionMultiplexer.Connect("localhost:6379");
             services.AddScoped(s => redis.GetDatabase());
+            services.AddSingleton(provider =>
+            {
+                return redis;
+            });
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();
