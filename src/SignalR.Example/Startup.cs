@@ -12,7 +12,14 @@ namespace SignalR.Example
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var redis = ConnectionMultiplexer.Connect("localhost:6379");
+            //var configurationOptions = new ConfigurationOptions
+            //{
+            //    EndPoints = { "localhost:6379" },
+            //    Password = "sua_senha_aqui", 
+            //    AbortOnConnectFail = false, //Essa configuração é útil quando você deseja que o StackExchange.Redis continue tentando se conectar ao Redis, mesmo que ocorram falhas iniciais. 
+            //};
+
+            var redis = ConnectionMultiplexer.Connect("localhost:6379"); //configurationOptions
             services.AddScoped(s => redis.GetDatabase());
             services.AddSingleton(provider =>
             {
